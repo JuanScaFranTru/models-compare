@@ -1,30 +1,40 @@
 """Train an rbfln model
 
 Usage:
-  train.py -m <n> -n <n>
+  train.py -k <model> -m <n> -n <n> -c <n> -o <file>
   train.py -h | --help
 
 Options:
+  -k <model>    Model to use [default: rbfln]
   -m <n>        Number of neurons in the hidden layer.
   -n <n>        Number of iterations.
+  -c <n>        Number of classes to train [default: 6]
+  -o <file>     Output filename
   -h --help     Show this screen.
 """
 from docopt import docopt
+import pickle
 from RBFLN.rbfln import RBFLN
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import random
+from sklearn.neural_network import MLPClassifier
 
 
-def plotit(f, xs, ts):
+def plotit(f, xs, ts, test_interval):
     ys = [f(x) for x in xs]
     ys_classes = [round(y) for y in ys]
     for i in range(len(ys_classes)):
         if ys_classes[i] < 0:
             ys_classes[i] = 0
 
-    correlation = np.corrcoef(ts, ys_classes)
-    print("Correlation: ", correlation)
+    correlation_all = np.corrcoef(ts, ys_classes)
+
+    start, end = test_interval
+    correlation_test = np.corrcoef(ts[start:end], ys_classes[start:end])
+
+    print("Correlation with all data: ", correlation_all)
+    print("Correlation with test data: ", correlation_test)
     weeks = np.array([i for i in range(len(xs))])
     plt.plot(weeks, ys_classes, 'b')
 
@@ -54,6 +64,14 @@ def smoothing(xs):
     return xs
 
 
+models = {
+    'rbfln': RBFLN,
+    'MLPC': MLPClassifier,
+    'rndm': RANDOM_FOREST,
+    'svm': SupportVectorMachine,
+    'lineal': LinearRegression,
+}
+
 if __name__ == '__main__':
     opts = docopt(__doc__)
 
@@ -79,7 +97,10 @@ if __name__ == '__main__':
     ts = ts / np.amax(ts)
     ts = smoothing(ts)
 
-    ts = to_classes(ts, 0, 0.3, 100)
+    # Read the number of classes
+    nclasses = int(opts['-c'])
+
+    ts = to_classes(ts, 0, 0.3, nclasses)
     # Number of neurons in the input layer
     N = len(data_columns)
 
@@ -87,15 +108,36 @@ if __name__ == '__main__':
     M = int(opts['-m'])
     # Read the number of iterations
     niter = int(opts['-n'])
+    # Read the model selected
+    model = models(opts['-k'])
 
-    xs_to_train = xs[101:qlen]
-    ts_to_train = ts[101:qlen]
-    xs_to_validate = xs[50:100]
-    ts_to_validate = ts[50:100]
-    model = RBFLN(xs_to_train, ts_to_train,
-                  xs_to_validate, ts_to_validate,
-                  M, N, niter, variance=0.005)
-    plotit(model.predict, xs, ts)
+    if opts['-k'] == 'mlpc':
+        pass
+    elif opts['-k'] == 'rndm':
+        pass
+    elif opts['-k'] == 'svm':
+        pass
+    elif opts['-k'] == 'lineal':
+        pass
+    else:
+        xs_to_train = xs[101:qlen]
+        ts_to_train = ts[101:qlen]
+        xs_to_validate = xs[50:100]
+        ts_to_validate = ts[50:100]
+
+        model = RBFLN(xs_to_train, ts_to_train,
+                      xs_to_validate, ts_to_validate,
+                      M, N, niter, variance=0.005)
+
+    print('Saving...')
+    filename = opts['-o']
+    filename = 'Models/parsing/' + filename
+    f = open(filename, 'wb')
+    pickle.dump(model, f)
+    f.close()
+
+    plotit(model.predict, xs, ts, (0, 49))
+
     weeks = np.array([i for i in range(229)])
     plt.plot(weeks, ts, 'r')
     plt.show()
