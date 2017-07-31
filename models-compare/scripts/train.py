@@ -19,6 +19,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy import random
 from sklearn.neural_network import MLPClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import SVC
+from sklearn.svm import SVR
+from sklearn.linear_model import LinearRegression
 
 
 def plotit(f, xs, ts, test_interval):
@@ -67,8 +71,9 @@ def smoothing(xs):
 models = {
     'rbfln': RBFLN,
     'MLPC': MLPClassifier,
-    'rndm': RANDOM_FOREST,
-    'svm': SupportVectorMachine,
+    'rndm': RandomForestClassifier,
+    'svmc': SVC,
+    'svmr': SVR,
     'lineal': LinearRegression,
 }
 
@@ -77,9 +82,9 @@ if __name__ == '__main__':
 
     random.seed(1)
     # Load the data
-    qlen = 229
+    qlen = 305
     # Select the columns correspondly to the data that we use to predict
-    data_columns = (2, 4, 6, 10)
+    data_columns = (2, 3, 4, 5, 6, 7, 8)
     xs = np.loadtxt('to_predict.csv', delimiter=',',
                     usecols=data_columns, dtype=float)
 
@@ -88,11 +93,16 @@ if __name__ == '__main__':
                     usecols=(1), dtype=float)
 
     # Normalization
+    # LST day
     for i in range(0, qlen):
         xs[i][2] /= 300
+    # LST night
+    for i in range(0, qlen):
+        xs[i][3] /= 300
 
+    # Lluvia
     for i in range(1, qlen):
-        xs[i][3] /= 50
+        xs[i][4] /= 100
 
     ts = ts / np.amax(ts)
     ts = smoothing(ts)
@@ -131,7 +141,7 @@ if __name__ == '__main__':
 
     print('Saving...')
     filename = opts['-o']
-    filename = 'Models/parsing/' + filename
+    filename = 'Models/' + filename
     f = open(filename, 'wb')
     pickle.dump(model, f)
     f.close()
