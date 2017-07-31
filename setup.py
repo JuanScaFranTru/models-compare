@@ -4,9 +4,9 @@ with open("README.md", 'r') as f:
     long_description = f.read()
 
 setup(
-   name='rbfln',
+   name='models_compare',
    version='0.1',
-   description='Radial Basis Functional Link Network',
+   description='Compare some Machine Learning models to predict oviposition',
    license="GPLv3",
    long_description=long_description,
    author='Francisco C. Trucco <franciscoctrucco@gmail.com>, Juan M. Scavuzzo <juansca1229@gmail.com>',

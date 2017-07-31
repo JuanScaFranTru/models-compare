@@ -1,7 +1,7 @@
 """Train an rbfln model
 
 Usage:
-  train.py -k <model> -m <n> -n <n> -c <n> -o <file>
+  train.py -k [<model>] -m <n> -n <n> -c <n> -o <file>
   train.py -h | --help
 
 Options:
@@ -16,7 +16,7 @@ from docopt import docopt
 import matplotlib.pyplot as plt
 import numpy as np
 import pickle
-from RBFLN.rbfln import RBFLN
+from models.rbfln import RBFLN
 from scipy import random
 from sklearn.neural_network import MLPClassifier
 from sklearn.ensemble import RandomForestClassifier
