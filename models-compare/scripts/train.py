@@ -13,10 +13,10 @@ Options:
   -h --help     Show this screen.
 """
 from docopt import docopt
+import matplotlib.pyplot as plt
+import numpy as np
 import pickle
 from RBFLN.rbfln import RBFLN
-import numpy as np
-import matplotlib.pyplot as plt
 from scipy import random
 from sklearn.neural_network import MLPClassifier
 from sklearn.ensemble import RandomForestClassifier
@@ -40,7 +40,9 @@ def plotit(f, xs, ts, test_interval):
     print("Correlation with all data: ", correlation_all)
     print("Correlation with test data: ", correlation_test)
     weeks = np.array([i for i in range(len(xs))])
-    plt.plot(weeks, ys_classes, 'b')
+    test_weeks = weeks[start:end]
+    plt.plot(weeks, ys_classes, 'bo',
+             test_weeks, ys_classes[start:end], 'go')
 
 
 def to_classes(xs, start, stop, nclasses=10):
@@ -148,6 +150,6 @@ if __name__ == '__main__':
 
     plotit(model.predict, xs, ts, (0, 49))
 
-    weeks = np.array([i for i in range(229)])
+    weeks = np.array([i for i in range(qlen)])
     plt.plot(weeks, ts, 'r')
     plt.show()
