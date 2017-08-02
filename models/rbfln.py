@@ -1,6 +1,7 @@
 import numpy as np
 from numpy.linalg import norm
 from math import exp
+import matplotlib.pyplot as plt
 
 
 class RBFLN(object):
@@ -236,3 +237,22 @@ class RBFLN(object):
 
         if self.eta_non_linear_weights is None:
             self.eta_non_linear_weights = 90
+
+    def plot(self, xs, ts, test_interval):
+        ys = [self.predict(x) for x in xs]
+        ys_classes = [round(y) for y in ys]
+
+        for i in range(len(ys_classes)):
+            if ys_classes[i] < 0:
+                ys_classes[i] = 0
+        correlation_all = np.corrcoef(ts, ys_classes)
+
+        # start, end = test_interval
+        # correlation_test = np.corrcoef(ts[start:end], ys_classes[start:end])
+
+        print("Correlation with all data: ", correlation_all)
+        # print("Correlation with test data: ", correlation_test)
+        weeks = np.array([i for i in range(len(xs))])
+    #    test_weeks = weeks[start:end]
+        plt.plot(weeks, ys_classes, 'b')
+        #         test_weeks, ys_classes[start:end], 'g')
