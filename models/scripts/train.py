@@ -72,7 +72,8 @@ if __name__ == '__main__':
     # Load the data
     qlen = 305
     # Select the columns correspondly to the data that we use to predict
-    data_columns = (2, 3, 4, 5, 6, 7, 8)
+    # data_columns = (2, 3, 4, 5, 6, 7, 8)
+    data_columns = (2, 3, 4, 5)
     xs = np.loadtxt('to_predict.csv', delimiter=',',
                     usecols=data_columns, dtype=float)
     # Extracting abundancy data
@@ -131,8 +132,6 @@ if __name__ == '__main__':
         ts_to_train = ts[76:qlen]
         xs_to_validate = xs[50:75]  # 10% to validate
         ts_to_validate = ts[50:75]  # 10% to validate
-        print(ts_to_train)
-        print(ts_to_validate)
         model = RBFLN(xs_to_train, ts_to_train,
                       xs_to_validate, ts_to_validate,
                       M, N, niter, variance=0.0005)

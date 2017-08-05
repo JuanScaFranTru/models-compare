@@ -253,6 +253,6 @@ class RBFLN(object):
         print("Correlation with all data: ", correlation_all)
         # print("Correlation with test data: ", correlation_test)
         weeks = np.array([i for i in range(len(xs))])
-    #    test_weeks = weeks[start:end]
+        # test_weeks = weeks[start:end]
         plt.plot(weeks, ys_classes, 'b')
         #         test_weeks, ys_classes[start:end], 'g')
